@@ -9,8 +9,8 @@ class App extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {
-      user: null,
-      pet: null
+      owners: null,
+      pets: null
     }
   }
 
@@ -27,10 +27,11 @@ class App extends Component {
 
   componentDidMount() {
     axios.get('/api',)
-    .then(data => console.log('axios result: ', data))
+    .then(res => this.setState({...res.data}))
   }
 
   render() {
+    console.log('state ', this.state);
     return (
       <div className="App">
         <header className="App-header">

@@ -3,6 +3,7 @@ import axios from 'axios';
 import './App.css';
 import ChooseOptions from './ChooseOptions';
 import Message from './Message';
+import AdoptedPets from './AdoptedPets';
 import {updateCase} from './utils';
 
 class App extends Component {
@@ -11,13 +12,15 @@ class App extends Component {
     this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getData = this.getData.bind(this);
+    this.removePet = this.removePet.bind(this);
     this.state = {
       owners: null,
       adoptedPets: null,
       availablePets: null,
       selectedOwner: null,
       selectedPet: null,
-      message: null
+      message: null,
+      seletedOwnerPets: null
     }
   }
 
@@ -29,6 +32,11 @@ class App extends Component {
       return;
     }
     this.setState({[keyType]: value});
+    if (keyType === 'selectedOwner') {
+      const owner = this.state.owners.filter(owner => owner.name === value).map(item => item.id)[0];
+      const seletedOwnerPets = this.state.adoptedPets.filter(pet => pet.parentId === owner);
+      this.setState({seletedOwnerPets});
+    }
   }
 
   handleSubmit(event) {
@@ -46,6 +54,17 @@ class App extends Component {
     });
   }
 
+  removePet(owner, petName) {
+    axios.delete(`http://localhost:5000/api/${petName}/${owner}`)
+    .then(response => {
+      this.setState({message: response.data});
+      setTimeout(() => {
+        this.setState({selectedOwner: null, selectedPet: null, message: null, seletedOwnerPets: null});
+        this.getData();
+      }, 1000);
+    })
+  }
+
   getData() {
     axios.get('http://localhost:5000/api')
     .then(res => this.setState({...res.data}))
@@ -57,7 +76,7 @@ class App extends Component {
 
   render() {
     const stateKeys = ['owners', 'availablePets'];
-    const {selectedOwner, selectedPet, message} = this.state;
+    const {selectedOwner, selectedPet, message, seletedOwnerPets} = this.state;
     return (
       <div className="App">
         <header className="App-header">
@@ -75,6 +94,7 @@ class App extends Component {
           )
         }
         {message === null ? null : <Message message={message}/>}
+        {seletedOwnerPets !== null && seletedOwnerPets.length > 0? <AdoptedPets owner={selectedOwner} adoptedPets={seletedOwnerPets} removePet={this.removePet}/> : null}
       </div>
     );
   }

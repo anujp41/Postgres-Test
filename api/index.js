@@ -24,7 +24,6 @@ router.get('/', (req, res, next) => {
 
 router.post('/', (req, res, next) => {
   const {owner, pet: petName} = req.body;
-  // console.log(owner, petName)
   Owners.findOne({where: {name: owner}})
   .then(parent => {
     if (parent === null) return next(genError('User not found!'));
@@ -55,6 +54,34 @@ router.post('/', (req, res, next) => {
     })
   })
   .catch(err => next(err));
+})
+
+router.delete('/:petName/:ownerName', (req, res, next) => {
+  const {petName, ownerName} = req.params;
+  Pets.update({
+    parentId: null
+  }, {
+    where: {
+      name: petName
+    }
+  }).then(() => {
+    Owners.findOne({
+      where: {
+        name: ownerName
+      }})
+      .then(owner => {
+        let currPets = owner.numOfPets;
+        currPets -= 1;
+        Owners.update({
+          numOfPets: currPets
+        }, {
+          where: {
+            id: owner.id
+          }
+        })
+        .then(res.send(`${ownerName} gave back ${petName}`));
+      })
+  })
 })
 
 module.exports = router;

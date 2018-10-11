@@ -1,0 +1,21 @@
+.adoptedPets {
+  width: 75%;
+  height: 25vh;
+  margin: 5% auto;
+  border: 3px ridge black;
+  display: flex;
+}
+
+.petCard {
+  background-color: #eaeae5;
+  margin: 2px;
+  padding: 5px;
+  height: 20px;
+}
+
+.petCard button {
+  margin-left: 10px;
+  padding: 0 5px;
+  background-color: #b4b5ad;
+  cursor: pointer;
+}

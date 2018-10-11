@@ -19,11 +19,19 @@ class App extends Component {
 
   handleClick(event) {
     const {target: {name, value}} = event;
+    const keyType = updateCase(name);
+    if (this.state[keyType] === value) {
+      this.setState({[keyType]: null});
+      return;
+    }
     this.setState({[updateCase(name)]: value});
   }
 
   handleSubmit(event) {
     event.preventDefault();
+    const {selectedOwner, selectedPet} = this.state;
+    if (!selectedOwner || !selectedPet) return alert('You have not selected both!');
+    console.log('to submit ', this.state.selectedOwner, this.state.selectedPet)
   }
 
   componentWillMount() {
@@ -42,8 +50,11 @@ class App extends Component {
         {this.state.pets === null
         ? <h1>Loading!</h1>
         : (
-          <div className='dropdown'>
-          {stateKeys.map((item, idx) => <ChooseOptions key={idx} type={item} data={this.state[item]} cb={this.handleClick} selected={[selectedOwner, selectedPet]}/>)}
+          <div>
+            <div className='dropdown'>
+            {stateKeys.map((item, idx) => <ChooseOptions key={idx} type={item} data={this.state[item]} cb={this.handleClick} selected={[selectedOwner, selectedPet]}/>)}
+            </div>
+            <button onClick={this.handleSubmit}>Submit</button>
           </div>
           )
         }

@@ -14,11 +14,10 @@
 }
 
 .option:hover {
-  border-color: purple;
+  border: 1.5px solid purple;
   cursor: pointer;
-  background-color: #e5ae70;
 }
 
 .clicked {
-  background-color: #df67ea;
+  background-color: #e5ae70;
 }

@@ -13,7 +13,8 @@ class App extends Component {
     this.getData = this.getData.bind(this);
     this.state = {
       owners: null,
-      pets: null,
+      adoptedPets: null,
+      availablePets: null,
       selectedOwner: null,
       selectedPet: null,
       message: null
@@ -55,14 +56,14 @@ class App extends Component {
   }
 
   render() {
-    const stateKeys = ['owners', 'pets'];
+    const stateKeys = ['owners', 'availablePets'];
     const {selectedOwner, selectedPet, message} = this.state;
     return (
       <div className="App">
         <header className="App-header">
           <h3>Select your pet!</h3>
         </header>
-        {this.state.pets === null
+        {this.state.availablePets === null
         ? <h1>Loading!</h1>
         : (
           <div>

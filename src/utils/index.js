@@ -1,1 +1,1 @@
-export const updateCase = string => `selected${string[0].toUpperCase()}${string.slice(1, -1)}`;
+export const updateCase = string => string === 'owners' ? 'selectedOwner' : 'selectedPet';

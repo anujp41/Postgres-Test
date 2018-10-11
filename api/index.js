@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const {Owners, Pets} = require ('../models');
+const {Op} = require('sequelize');
 
 const genError = errMsg => {
   const newError = new Error(errMsg);
@@ -10,11 +11,14 @@ const genError = errMsg => {
 router.get('/', (req, res, next) => {
   Owners.findAll({order: [['id', 'ASC']]})
     .then(owners => Pets.findAll({
-      attributes: ['id', 'name'],
-      where: {parentId: null},
       order: [['id', 'ASC']]
     })
-  .then(pets => res.json({owners, pets}))
+    .then(async pets => {
+      const availablePets = [];
+      const adoptedPets = [];
+      await pets.forEach(pet => pet.parentId === null ? availablePets.push(pet) : adoptedPets.push(pet))
+      res.json({owners, adoptedPets, availablePets});
+    })
   );
 });
 

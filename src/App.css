@@ -19,11 +19,19 @@
   align-content: center;
   flex-direction: row;
   width: 700px;
-  margin: 5% auto;
+  margin: 5% auto 1% auto;
   justify-content: space-between;
   background-color: aquamarine;
 }
 
 #root {
   background-image: linear-gradient(141deg, #9fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
+}
+
+button:focus {
+  outline:0;
+}
+
+.submitBtn {
+  padding: 10px;
 }

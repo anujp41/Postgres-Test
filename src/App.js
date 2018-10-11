@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
 import ChooseOptions from './ChooseOptions';
-import {updateCase} from './utils/index.js';
+import {updateCase} from './utils';
 
 class App extends Component {
   constructor() {
@@ -24,18 +24,20 @@ class App extends Component {
       this.setState({[keyType]: null});
       return;
     }
-    this.setState({[updateCase(name)]: value});
+    this.setState({[keyType]: value});
   }
 
   handleSubmit(event) {
     event.preventDefault();
     const {selectedOwner, selectedPet} = this.state;
     if (!selectedOwner || !selectedPet) return alert('You have not selected both!');
-    console.log('to submit ', this.state.selectedOwner, this.state.selectedPet)
+    const submission = {owner: selectedOwner, pet: selectedPet};
+    axios.post('http://localhost:5000/api', submission)
+    .then((data) => console.log('submitted', data));
   }
 
-  componentWillMount() {
-    axios.get('/api')
+  componentDidMount() {
+    axios.get('http://localhost:5000/api')
     .then(res => this.setState({...res.data}))
   }
 
@@ -54,7 +56,7 @@ class App extends Component {
             <div className='dropdown'>
             {stateKeys.map((item, idx) => <ChooseOptions key={idx} type={item} data={this.state[item]} cb={this.handleClick} selected={[selectedOwner, selectedPet]}/>)}
             </div>
-            <button onClick={this.handleSubmit}>Submit</button>
+            <button className='submitBtn' onClick={this.handleSubmit}>Submit</button>
           </div>
           )
         }

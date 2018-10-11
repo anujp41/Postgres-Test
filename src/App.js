@@ -1,45 +1,52 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
-import Dropdown from './Dropdown';
+import ChooseOptions from './ChooseOptions';
+import {updateCase} from './utils/index.js';
 
 class App extends Component {
   constructor() {
     super();
-    this.handleChange = this.handleChange.bind(this);
+    this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {
       owners: null,
-      pets: null
+      pets: null,
+      selectedOwner: null,
+      selectedPet: null
     }
   }
 
-  handleChange(event) {
+  handleClick(event) {
     const {target: {name, value}} = event;
-    this.setState({[name]: value});
+    this.setState({[updateCase(name)]: value});
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    const {user, pet} = this.state;
-    console.log(`${user} has selected ${pet}!`);
   }
 
-  componentDidMount() {
-    axios.get('/api',)
+  componentWillMount() {
+    axios.get('/api')
     .then(res => this.setState({...res.data}))
   }
 
   render() {
-    console.log('state ', this.state);
+    const stateKeys = ['owners', 'pets'];
+    const {selectedOwner, selectedPet} = this.state;
     return (
       <div className="App">
         <header className="App-header">
           <h3>Select your pet!</h3>
         </header>
-        <div className='dropdown'>
-          <Dropdown data={[1, 2, 3, 4]}/>
-        </div>
+        {this.state.pets === null
+        ? <h1>Loading!</h1>
+        : (
+          <div className='dropdown'>
+          {stateKeys.map((item, idx) => <ChooseOptions key={idx} type={item} data={this.state[item]} cb={this.handleClick} selected={[selectedOwner, selectedPet]}/>)}
+          </div>
+          )
+        }
       </div>
     );
   }

@@ -1,0 +1,12 @@
+.msgContainer {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.msg {
+  background-color: gray;
+  padding: 5px 25px;
+  color: white;
+  font-family: "Courier New", Courier, monospace;
+}

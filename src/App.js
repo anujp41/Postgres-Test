@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
 import ChooseOptions from './ChooseOptions';
+import Message from './Message';
 import {updateCase} from './utils';
 
 class App extends Component {
@@ -9,11 +10,13 @@ class App extends Component {
     super();
     this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.getData = this.getData.bind(this);
     this.state = {
       owners: null,
       pets: null,
       selectedOwner: null,
-      selectedPet: null
+      selectedPet: null,
+      message: null
     }
   }
 
@@ -33,17 +36,27 @@ class App extends Component {
     if (!selectedOwner || !selectedPet) return alert('You have not selected both!');
     const submission = {owner: selectedOwner, pet: selectedPet};
     axios.post('http://localhost:5000/api', submission)
-    .then((data) => console.log('submitted', data));
+    .then(response => {
+      this.setState({message: response.data});
+      setTimeout(() => {
+        this.setState({selectedOwner: null, selectedPet: null, message: null});
+        this.getData();
+      }, 1000);
+    });
   }
 
-  componentDidMount() {
+  getData() {
     axios.get('http://localhost:5000/api')
     .then(res => this.setState({...res.data}))
   }
 
+  componentDidMount() {
+    this.getData();
+  }
+
   render() {
     const stateKeys = ['owners', 'pets'];
-    const {selectedOwner, selectedPet} = this.state;
+    const {selectedOwner, selectedPet, message} = this.state;
     return (
       <div className="App">
         <header className="App-header">
@@ -60,6 +73,7 @@ class App extends Component {
           </div>
           )
         }
+        {message === null ? null : <Message message={message}/>}
       </div>
     );
   }

@@ -42,13 +42,14 @@ class App extends Component {
   handleSubmit(event) {
     event.preventDefault();
     const {selectedOwner, selectedPet} = this.state;
+    const selectedPetData = this.state.availablePets.filter(pet => pet.name === selectedPet);
     if (!selectedOwner || !selectedPet) return alert('You have not selected both!');
     const submission = {owner: selectedOwner, pet: selectedPet};
     axios.post('http://localhost:5000/api', submission)
     .then(response => {
-      this.setState({message: response.data});
+      this.setState({message: response.data, seletedOwnerPets: [...this.state.seletedOwnerPets, ...selectedPetData]});
       setTimeout(() => {
-        this.setState({selectedOwner: null, selectedPet: null, message: null});
+        this.setState({selectedOwner: null, selectedPet: null, message: null, seletedOwnerPets: null});
         this.getData();
       }, 1000);
     });
@@ -57,9 +58,10 @@ class App extends Component {
   removePet(owner, petName) {
     axios.delete(`http://localhost:5000/api/${petName}/${owner}`)
     .then(response => {
-      this.setState({message: response.data});
+      const seletedOwnerPets = this.state.seletedOwnerPets.filter(pet => pet.name !== petName);
+      this.setState({message: response.data, seletedOwnerPets});
       setTimeout(() => {
-        this.setState({selectedOwner: null, selectedPet: null, message: null, seletedOwnerPets: null});
+        this.setState({selectedOwner: null, selectedPet: null, message: null});
         this.getData();
       }, 1000);
     })
@@ -89,11 +91,10 @@ class App extends Component {
             <div className='dropdown'>
             {stateKeys.map((item, idx) => <ChooseOptions key={idx} type={item} data={this.state[item]} cb={this.handleClick} selected={[selectedOwner, selectedPet]}/>)}
             </div>
-            <button className='submitBtn' onClick={this.handleSubmit}>Submit</button>
+            {message === null ? <button className='submitBtn' onClick={this.handleSubmit}>Submit</button> : <Message message={message} show={true}/>}
           </div>
           )
         }
-        {message === null ? null : <Message message={message}/>}
         {seletedOwnerPets !== null && seletedOwnerPets.length > 0? <AdoptedPets owner={selectedOwner} adoptedPets={seletedOwnerPets} removePet={this.removePet}/> : null}
       </div>
     );

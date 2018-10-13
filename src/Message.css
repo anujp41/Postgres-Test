@@ -1,7 +1,15 @@
 .msgContainer {
-  display: flex;
   align-content: center;
   justify-content: center;
+  height: 20px;
+}
+
+.hide {
+  visibility: hidden;
+}
+
+.show {
+  visibility: visible;
 }
 
 .msg {
